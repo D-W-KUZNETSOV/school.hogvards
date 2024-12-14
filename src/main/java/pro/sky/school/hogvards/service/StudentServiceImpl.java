@@ -40,7 +40,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student putStudent(Student student) throws EntityNotFoundException {
+    public Student editStudent(Student student) throws EntityNotFoundException {
         if (!studentRepository.existsById(student.getId())) {
             throw new EntityNotFoundException("Student with id " + student.getId() + " does not exist.");
         }

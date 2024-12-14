@@ -13,6 +13,7 @@ public interface FacultyRepository extends JpaRepository<Faculty, Long> {
 
     List<Faculty> findByNameIgnoreCase(String name);
 
+
     boolean existsByName(String name);
 
 }

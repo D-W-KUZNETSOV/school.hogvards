@@ -43,7 +43,11 @@ class StudentControllerRestTemplateTest {
 
     @Autowired
     private StudentRepository studentRepository;
-
+    @BeforeEach
+    public void setUp() {
+        studentRepository.deleteAll();
+        facultyRepository.deleteAll();
+    }
 
     @Test
     void contextLoads() throws Exception {
@@ -74,7 +78,8 @@ class StudentControllerRestTemplateTest {
         student.setAge(15);
         student.setFaculty(faculty);
 
-        ResponseEntity<Student> response = this.restTemplate.postForEntity("http://localhost:" + port + "/student", student, Student.class);
+        ResponseEntity<Student> response = this.restTemplate.postForEntity("http://localhost:"
+                + port + "/student", student, Student.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
@@ -89,10 +94,12 @@ class StudentControllerRestTemplateTest {
 
     @Test
     public void testPutStudent() {
+
         Faculty faculty = new Faculty();
-        faculty.setName("Huflepuff");
+        faculty.setName("Hufflepuff");
         faculty.setColor("yellow");
         Faculty savedFaculty = facultyRepository.save(faculty);
+
 
         Student student = new Student();
         student.setName("Tanya Grotter");
@@ -103,14 +110,20 @@ class StudentControllerRestTemplateTest {
 
         assertThat(savedStudent.getId()).isGreaterThan(0);
 
-        savedStudent.setName("Ron Wizly");
+
+        savedStudent.setName("Ron Weasley");
+        savedStudent.setAge(12);
         this.restTemplate.put("http://localhost:" + port + "/student/" + savedStudent.getId(), savedStudent);
 
 
-        Student updatedStudent = this.restTemplate.getForObject("http://localhost:" + port + "/student/" + savedStudent.getId(), Student.class);
+        Student updatedStudent = this.restTemplate.getForObject("http://localhost:" + port + "/student/"
+                + savedStudent.getId(), Student.class);
+
+
         assertThat(updatedStudent).isNotNull();
-        assertThat(updatedStudent.getName()).isEqualTo("Ron Wizly");
+        assertThat(updatedStudent.getName()).isEqualTo("Ron Weasley");
     }
+
 
 
     @Test
@@ -128,7 +141,8 @@ class StudentControllerRestTemplateTest {
         student.setFaculty(faculty);
 
 
-        ResponseEntity<Student> savedStudentResponse = this.restTemplate.postForEntity("http://localhost:" + port + "/student", student, Student.class);
+        ResponseEntity<Student> savedStudentResponse = this.restTemplate.postForEntity("http://localhost:"
+                + port + "/student", student, Student.class);
         Student savedStudent = savedStudentResponse.getBody();
 
         assertThat(savedStudent).isNotNull();
@@ -137,7 +151,8 @@ class StudentControllerRestTemplateTest {
 
         this.restTemplate.delete("http://localhost:" + port + "/student/" + savedStudent.getId());
 
-        ResponseEntity<Student> response = this.restTemplate.getForEntity("http://localhost:" + port + "/student/" + savedStudent.getId(), Student.class);
+        ResponseEntity<Student> response = this.restTemplate.getForEntity("http://localhost:"
+                + port + "/student/" + savedStudent.getId(), Student.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -204,7 +219,7 @@ class StudentControllerRestTemplateTest {
     }
 
     @Test
-    public void testGetStudentsByFacultyId() throws Exception {
+    public void testGetStudentsOfFaculty() throws Exception {
 
         Faculty faculty = new Faculty();
         faculty.setName("Hufflepuff");
@@ -220,7 +235,7 @@ class StudentControllerRestTemplateTest {
 
 
         ResponseEntity<List<Student>> response = this.restTemplate.exchange(
-                "http://localhost:" + port + "/faculty/" + faculty.getId() + "/students"
+                "http://localhost:" + port + "/student/" + faculty.getId() + "/faculty"
                 ,
                 HttpMethod.GET,
                 null,

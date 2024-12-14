@@ -1,5 +1,6 @@
 package pro.sky.school.hogvards.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,9 +19,6 @@ import java.util.Optional;
     public class StudentController {
 
         private final StudentServiceImpl studentServiceImpl;
-
-
-
 
         @Autowired
         private FacultyServiceImpl facultyServiceImpl;
@@ -44,21 +42,29 @@ import java.util.Optional;
             return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
         }
 
-        @PutMapping("{id}")
-        public Student updateStudent(@PathVariable Long id, @RequestBody Student student) {
-            student.setId(id);
-            return studentServiceImpl.putStudent(student);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student updatedStudent) {
+        return studentRepository.findById(id)
+                .map(existingStudent -> {
+                    existingStudent.setName(updatedStudent.getName());
+                    existingStudent.setAge(updatedStudent.getAge());
+                    existingStudent.setFaculty(updatedStudent.getFaculty());
+                    Student savedStudent = studentRepository.save(existingStudent);
+                    return ResponseEntity.ok(savedStudent);
+                })
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with id " + id));
+    }
 
-        @DeleteMapping("/{id}")
-        public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
-            if (studentServiceImpl.existsById(id)) {
-                studentServiceImpl.deleteStudent(id);
-                return ResponseEntity.noContent().build();
-            } else {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteStudent(@PathVariable Long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        if (student.isPresent()) {
+            studentRepository.deleteById(id);
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
         }
+    }
 
 
         @GetMapping("/age-between")
@@ -67,8 +73,8 @@ import java.util.Optional;
             return ResponseEntity.ok(students);
         }
 
-        @GetMapping("/{id}/students")
-        public ResponseEntity<List<Student>> getStudentsByFacultyId(@PathVariable Long id) {
+        @GetMapping("/{id}/faculty")
+        public ResponseEntity<List<Student>> getStudentsOfFaculty(@PathVariable Long id) {
             List<Student> students = studentServiceImpl.getStudentsByFacultyId(id);
             if (students.isEmpty()) {
                 return ResponseEntity.notFound().build();

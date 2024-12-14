@@ -73,10 +73,15 @@ public class FacultyController {
         facultyServiceImpl.deleteFaculty(id);
         return ResponseEntity.noContent().build();
     }
-
     @GetMapping("/{id}/students")
-    public List<Student> getStudentsByFacultyId(@PathVariable Long id) {
-        return studentRepository.findByFacultyId(id);
+    public ResponseEntity<List<Student>> getStudentsByFacultyId(@PathVariable Long id) {
+        List<Student> students = studentRepository.findByFacultyId(id);
+
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build(); // Возвращаем 404, если студентов нет
+        }
+
+        return ResponseEntity.ok(students); // Возвращаем 200 с найденными студентами
     }
 
 }
