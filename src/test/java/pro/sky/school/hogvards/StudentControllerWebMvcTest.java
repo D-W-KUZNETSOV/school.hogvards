@@ -54,28 +54,20 @@ public class StudentControllerWebMvcTest {
     @Test
     public void testPostStudent() throws Exception {
 
-
-        Faculty faculty = new Faculty();
-        faculty.setName("Grifindor");
-        faculty.setColor("Red");
+        Faculty faculty = createFaculty("Gryffindor", "Red");
 
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
-        JSONObject studentObjekt = new JSONObject();
-        studentObjekt.put("name", "Garry Potter");
-        studentObjekt.put("age", 15);
-        studentObjekt.put("facultyId", 1);
+
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("name", "Garry Potter");
+        studentObject.put("age", 15);
+        studentObject.put("facultyId", 1);
 
 
-        Student student = new Student();
-        student.setId(1L);
-        student.setAge(15);
-        student.setName("Garry Potter");
-        student.setFaculty(faculty);
+        Student student = createStudent(1L, "Garry Potter", 15, faculty);
 
         when(studentRepository.save(any(Student.class))).thenReturn(student);
-
-
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student")
                         .content(objectMapper.writeValueAsString(student))
@@ -84,34 +76,38 @@ public class StudentControllerWebMvcTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Garry Potter"))
                 .andExpect(jsonPath("$.age").value(15))
-                .andExpect(jsonPath("$.faculty.name").value("Grifindor"));
+                .andExpect(jsonPath("$.faculty.name").value("Gryffindor"));
 
         verify(studentRepository).save(any(Student.class));
+    }
+
+    private Faculty createFaculty(String name, String color) {
+        Faculty faculty = new Faculty();
+        faculty.setName(name);
+        faculty.setColor(color);
+        return faculty;
+    }
+
+    private Student createStudent(Long id, String name, int age, Faculty faculty) {
+        Student student = new Student();
+        student.setId(id);
+        student.setName(name);
+        student.setAge(age);
+        student.setFaculty(faculty);
+        return student;
     }
 
     @Test
     public void testGetStudent() throws Exception {
 
-        Faculty faculty = new Faculty();
-        faculty.setId(1L);
-        faculty.setName("Grifindor");
-        faculty.setColor("Red");
-
-        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
-
-        JSONObject studentObjekt = new JSONObject();
-        studentObjekt.put("name", "Garry Potter");
-        studentObjekt.put("age", 15);
-        studentObjekt.put("facultyId", 1L);
+        Faculty faculty = createFaculty("Grifindor", "Red");
 
 
-        Student student = new Student();
-        student.setId(1L);
-        student.setAge(15);
-        student.setName("Garry Potter");
-        student.setFaculty(faculty);
+        Student student = createStudent(1L, "Garry Potter", 15, faculty);
+
 
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/1")
@@ -121,33 +117,21 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.age").value(15))
                 .andExpect(jsonPath("$.faculty.name").value("Grifindor"));
 
+
         verify(studentRepository).findById(1L);
     }
 
+
     @Test
     public void testPutStudent() throws Exception {
-        Faculty faculty = new Faculty();
-        faculty.setId(1L);
-        faculty.setName("Grifindor");
-        faculty.setColor("Red");
 
-        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+        Faculty faculty = createFaculty("Grifindor", "Red");
 
-        JSONObject studentObjekt = new JSONObject();
-        studentObjekt.put("id", 1L);
-        studentObjekt.put("name", "Garry Potter");
-        studentObjekt.put("age", 15);
-        studentObjekt.put("facultyId", 1L);
 
-        Student updatedStudent = new Student();
-        updatedStudent.setId(1L);
-        updatedStudent.setAge(14);
-        updatedStudent.setName("Harry Potter");
-        updatedStudent.setFaculty(faculty);
+        Student updatedStudent = createStudent(1L, "Harry Potter", 14, faculty);
 
         when(studentRepository.findById(1L)).thenReturn(Optional.of(updatedStudent));
         when(studentRepository.save(any(Student.class))).thenReturn(updatedStudent);
-
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/student/1")
@@ -162,77 +146,63 @@ public class StudentControllerWebMvcTest {
 
         verify(studentRepository).findById(1L);
         verify(studentRepository).save(any(Student.class));
-
-
     }
+
 
     @Test
     public void testDeleteStudent() throws Exception {
 
-        Student student = new Student();
-        student.setId(1L);
-        student.setName("Garry Potter");
-        student.setAge(15);
-        student.setId(1L);
+        Student student = createStudent(1L, "Garry Potter", 15, null);
+
 
         when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+
 
         mockMvc.perform(MockMvcRequestBuilders
                         .delete("/student/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
+
         verify(studentRepository, times(1)).deleteById(1L);
     }
+
 
     @Test
     public void testFindStudentsByAgeBetween() throws Exception {
 
-        Faculty faculty = new Faculty();
-        faculty.setName("Grifindor");
-        faculty.setColor("red");
-        facultyRepository.save(faculty);
-
-        Faculty faculty2 = new Faculty();
-        faculty2.setName("Slyserin");
-        faculty2.setColor("Green");
-        facultyRepository.save(faculty2);
-
-        Faculty faculty3 = new Faculty();
-        faculty3.setName("Huflepuff");
-        faculty3.setColor("yellow");
-        facultyRepository.save(faculty3);
+        Faculty faculty1 = createFaculty("Grifindor", "red");
+        Faculty faculty2 = createFaculty("Slyserin", "green");
+        Faculty faculty3 = createFaculty("Huflepuff", "yellow");
 
 
-        Student student1 = new Student();
-        student1.setName("Garry Potter");
-        student1.setAge(16);
-        student1.setFaculty(faculty);
-        studentRepository.save(student1);
+        Student student1 = createStudent("Garry Potter", 16, faculty1);
+        Student student2 = createStudent("Drako Malfoy", 15, faculty2);
+        Student student3 = createStudent("Polumna Lowegood", 18, faculty3);
 
-        Student student2 = new Student();
-        student2.setName("Drako Malfoy");
-        student2.setAge(15);
-        student2.setFaculty(faculty2);
-        studentRepository.save(student2);
-
-        Student student3 = new Student();
-        student3.setName("Polumna Lowegood");
-        student3.setAge(18);
-        student3.setFaculty(faculty3);
-        studentRepository.save(student3);
 
         when(studentRepository.findByAgeBetween(14, 16))
                 .thenReturn(Arrays.asList(student1, student2));
+
 
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/student/age-between?minAge=14&maxAge=16")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].name").value("Garry Potter"))
-                .andExpect(jsonPath("$[1].name").value("Drako Malfoy"));
+                .andExpect(jsonPath("$[0].name").value(student1.getName()))
+                .andExpect(jsonPath("$[1].name").value(student2.getName()));
     }
+
+    private Student createStudent(String name, int age, Faculty faculty) {
+        Student student = new Student();
+        student.setName(name);
+        student.setAge(age);
+        student.setFaculty(faculty);
+        studentRepository.save(student);
+        return student;
+    }
+
 
     @Test
     public void testGetStudentsOfFaculty() throws Exception {

@@ -59,10 +59,23 @@ public class FacultyController {
     }
 
     @PutMapping("/{id}")
-    public Faculty updateFaculty(@PathVariable Long id,
-                                 @RequestBody Faculty faculty) {
+    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id,
+                                                 @RequestBody Faculty faculty) {
+        // Убедитесь, что переданный объект faculty не null
+        if (faculty == null) {
+            return ResponseEntity.badRequest().build(); // Возвращаем 400 Bad Request
+        }
+
+        // Устанавливаем id для обновления
         faculty.setId(id);
-        return facultyServiceImpl.editFaculty(faculty);
+
+        // Проверяем, существует ли факультет с данным id
+        Faculty updatedFaculty = facultyServiceImpl.editFaculty(faculty);
+        if (updatedFaculty == null) {
+            return ResponseEntity.notFound().build(); // Возвращаем 404 Not Found, если факультет не найден
+        }
+
+        return ResponseEntity.ok(updatedFaculty); // Возвращаем 200 OK с обновленным объектом
     }
 
     @DeleteMapping("/{id}")

@@ -50,7 +50,7 @@ public class FacultyControllerWebMvcTest {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    public void testGrutFaculty() throws Exception {
+    public void testPostFaculty() throws Exception {
 
         JSONObject facultyObjekt = new JSONObject();
         facultyObjekt.put("name", "Grifindor");
@@ -76,6 +76,22 @@ public class FacultyControllerWebMvcTest {
 
         verify(facultyRepository).save(any(Faculty.class));
 
+    }
+    @Test
+            public void testGetFaculty() throws Exception {
+        JSONObject facultyObjekt = new JSONObject();
+        facultyObjekt.put("name", "Grifindor");
+        facultyObjekt.put("color", "red");
+
+        Faculty faculty = new Faculty();
+        faculty.setId(1L);
+        faculty.setName("Grifindor");
+        faculty.setColor("red");
+
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(faculty));
+
+
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/faculty/1")
                         .content(objectMapper.writeValueAsString(faculty))
@@ -86,24 +102,55 @@ public class FacultyControllerWebMvcTest {
 
 
         verify(facultyRepository).findById(1L);
+    }
+    @Test
+            public void testPutFaculty() throws Exception {
+
+        JSONObject facultyObjekt = new JSONObject();
+        facultyObjekt.put("name", "Gryfindor");
+        facultyObjekt.put("color", "red");
+
+        String jsonContent = "{\"id\":1,\"name\":\"Gryfindor\",\"color\":\"red\"}";
+
+        Faculty faculty = new Faculty();
+        faculty.setId(1L);
+        faculty.setName("Gryfindor");
+        faculty.setColor("red");
+
+        when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
+        when(facultyRepository.findById(any(Long.class))).thenReturn(Optional.of(faculty));
 
 
-        Faculty updateFaculty = new Faculty(1L, "Grifindor", "red");
+        Faculty updateFaculty = new Faculty(1L, "Gryfindor", "red");
         when(facultyRepository.findById(1L)).thenReturn(Optional.of(updateFaculty));
 
 
-        Faculty updatedFaculty = new Faculty(1L, "Grifindor", "Red");
+        Faculty updatedFaculty = new Faculty(1L, "Gryfindor", "red");
 
         mockMvc.perform(MockMvcRequestBuilders
                         .put("/faculty/1")
-                        .content(objectMapper.writeValueAsString(updatedFaculty))
                         .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(jsonContent))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Grifindor"))
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.name").value("Gryfindor"))
                 .andExpect(jsonPath("$.color").value("red"));
 
-        verify(facultyRepository).findById(1L);
+        verify(facultyRepository).save(faculty);;
+    }
+    @Test
+            public void testDeleteFaculty()throws Exception {
+
+
+        JSONObject facultyObjekt = new JSONObject();
+        facultyObjekt.put("name", "Grifindor");
+        facultyObjekt.put("color", "red");
+
+        Faculty faculty = new Faculty();
+        faculty.setId(1L);
+        faculty.setName("Grifindor");
+        faculty.setColor("red");
 
 
         when(facultyRepository.existsById(1L)).thenReturn(true);

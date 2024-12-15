@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class FacultyServiceImpl implements  FacultyService {
+public class FacultyServiceImpl implements FacultyService {
 
     private final FacultyRepository facultyRepository;
 
@@ -47,8 +47,19 @@ public class FacultyServiceImpl implements  FacultyService {
 
     @Override
     public Faculty editFaculty(Faculty faculty) {
-        return facultyRepository.save(faculty);
+        // Проверяем, существует ли факультет
+        Optional<Faculty> existingFaculty = facultyRepository.findById(faculty.getId());
+        if (existingFaculty.isPresent()) {
+            // Обновляем поля и сохраняем
+            Faculty updatedFaculty = existingFaculty.get();
+            updatedFaculty.setName(faculty.getName());
+            updatedFaculty.setColor(faculty.getColor());
+            return facultyRepository.save(updatedFaculty);
+        }
+        return null; // Если факультет не найден
     }
+
+
     public boolean existsById(Long id) {
         return facultyRepository.existsById(id);
     }
