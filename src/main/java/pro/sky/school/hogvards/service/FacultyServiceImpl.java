@@ -47,16 +47,14 @@ public class FacultyServiceImpl implements FacultyService {
 
     @Override
     public Faculty editFaculty(Faculty faculty) {
-        // Проверяем, существует ли факультет
         Optional<Faculty> existingFaculty = facultyRepository.findById(faculty.getId());
         if (existingFaculty.isPresent()) {
-            // Обновляем поля и сохраняем
             Faculty updatedFaculty = existingFaculty.get();
             updatedFaculty.setName(faculty.getName());
             updatedFaculty.setColor(faculty.getColor());
             return facultyRepository.save(updatedFaculty);
         }
-        return null; // Если факультет не найден
+        return null;
     }
 
 

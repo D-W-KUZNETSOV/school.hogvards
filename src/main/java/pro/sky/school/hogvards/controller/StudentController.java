@@ -3,15 +3,21 @@ package pro.sky.school.hogvards.controller;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pro.sky.school.hogvards.model.Student;
 import pro.sky.school.hogvards.repositories.StudentRepository;
+import pro.sky.school.hogvards.service.AvatarService;
 import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import pro.sky.school.hogvards.service.StudentServiceImpl;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
 
 @RestController
@@ -20,27 +26,33 @@ import java.util.Optional;
 
         private final StudentServiceImpl studentServiceImpl;
 
+        private final AvatarService avatarService;
+
         @Autowired
         private FacultyServiceImpl facultyServiceImpl;
         @Autowired
         private StudentRepository studentRepository;
 
-        public StudentController(StudentServiceImpl studentServiceImpl) {
+        public StudentController(StudentServiceImpl studentServiceImpl, AvatarService avatarService) {
             this.studentServiceImpl = studentServiceImpl;
+            this.avatarService = avatarService;
         }
+
+    @PostMapping
+    public ResponseEntity<Student> createStudent(@RequestBody Student student) {
+        Student createdStudent = studentServiceImpl.addStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
+    }
 
         @GetMapping("/{id}")
         public ResponseEntity<Student> findStudentById(@PathVariable Long id) {
-            Optional<Student> student = studentServiceImpl.findStudent(id);
+            Optional<Student> student;
+            student = studentServiceImpl.findStudent(id);
             return student.map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(404).build());
         }
 
-        @PostMapping
-        public ResponseEntity<Student> createStudent(@RequestBody Student student) {
-            Student createdStudent = studentServiceImpl.addStudent(student);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdStudent);
-        }
+
 
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable Long id, @RequestBody Student updatedStudent) {
@@ -81,5 +93,15 @@ import java.util.Optional;
             }
             return ResponseEntity.ok(students);
         }
+    @PostMapping(value = "/{studentId}/avatar", consumes = MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadAvatar(
+            @PathVariable Long studentId,
+            @RequestParam MultipartFile avatar
+    ) throws IOException {
+        avatarService.uploadAvatar(studentId, avatar);
+        return ResponseEntity.ok().build();
+
+    }
+
     }
 

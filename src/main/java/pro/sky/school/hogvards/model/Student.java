@@ -1,7 +1,7 @@
 package pro.sky.school.hogvards.model;
 
 import jakarta.persistence.*;
-
+import jakarta.persistence.Id;
 import java.util.Objects;
 
 

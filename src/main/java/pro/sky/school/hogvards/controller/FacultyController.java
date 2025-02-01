@@ -61,21 +61,21 @@ public class FacultyController {
     @PutMapping("/{id}")
     public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id,
                                                  @RequestBody Faculty faculty) {
-        // Убедитесь, что переданный объект faculty не null
+
         if (faculty == null) {
-            return ResponseEntity.badRequest().build(); // Возвращаем 400 Bad Request
+            return ResponseEntity.badRequest().build();
         }
 
-        // Устанавливаем id для обновления
+
         faculty.setId(id);
 
-        // Проверяем, существует ли факультет с данным id
+
         Faculty updatedFaculty = facultyServiceImpl.editFaculty(faculty);
         if (updatedFaculty == null) {
-            return ResponseEntity.notFound().build(); // Возвращаем 404 Not Found, если факультет не найден
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(updatedFaculty); // Возвращаем 200 OK с обновленным объектом
+        return ResponseEntity.ok(updatedFaculty);
     }
 
     @DeleteMapping("/{id}")
@@ -91,10 +91,10 @@ public class FacultyController {
         List<Student> students = studentRepository.findByFacultyId(id);
 
         if (students.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Возвращаем 404, если студентов нет
+            return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(students); // Возвращаем 200 с найденными студентами
+        return ResponseEntity.ok(students);
     }
 
 }
