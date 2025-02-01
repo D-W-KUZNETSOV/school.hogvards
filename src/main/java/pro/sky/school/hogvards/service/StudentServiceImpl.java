@@ -3,6 +3,7 @@ package pro.sky.school.hogvards.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pro.sky.school.hogvards.DTO.CreateStudentDto;
 import pro.sky.school.hogvards.model.Student;
 import pro.sky.school.hogvards.repositories.StudentRepository;
 
@@ -21,15 +22,20 @@ public class StudentServiceImpl implements StudentService {
         this.studentRepository = studentRepository;
     }
 
+
     @Override
-    public Student addStudent(Student student) {
-        if (student.getFaculty() == null) {
-            throw new IllegalArgumentException("Faculty cannot be null");
+    public Student addStudent(CreateStudentDto createStudentDto) {
+        if (createStudentDto.getName() == null || createStudentDto.getName().isEmpty()) {
+            throw new IllegalArgumentException("Student name cannot be null or empty");
         }
-        if (student.equals(student.getName())) {
-            throw new IllegalArgumentException("A student with that name already exists");
+        if (createStudentDto.getAge() <= 0) {
+            throw new IllegalArgumentException("Student age must be a positive number");
         }
 
+        Student student = new Student();
+        student.setName(createStudentDto.getName());
+        student.setAge(createStudentDto.getAge());
+        student.setFacultyId(createStudentDto.getFacultyId());
         return studentRepository.save(student);
     }
 

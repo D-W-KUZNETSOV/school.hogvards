@@ -1,12 +1,11 @@
 package pro.sky.school.hogvards.model;
 
 import jakarta.persistence.*;
-import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 import java.util.Objects;
 
-
 @Entity
-@Table(name = "student")
 public class Student {
 
     @Id
@@ -16,21 +15,25 @@ public class Student {
     private String name;
     private int age;
 
+    @NotNull(message = "Faculty ID is required") // Поле обязательно
+    @Min(value = 1, message = "Faculty ID must be a positive number") // ID должен быть положительным
+    @Column(name = "faculty_id", nullable = false) // Столбец в базе данных не может быть null
+    private int facultyId;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id")
+    @JoinColumn(name = "faculty_id", insertable = false, updatable = false) // Связь с Faculty, но не вставляется/обновляется
     private Faculty faculty;
 
-    public Student(long id, String name, int age, Faculty faculty) {
+    // Конструктор с параметрами
+    public Student(long id, String name, int age, int facultyId) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.faculty = faculty;
+        this.facultyId = facultyId;
     }
 
-
+    // Конструктор по умолчанию
     public Student() {
-
     }
 
     @Override
@@ -39,25 +42,25 @@ public class Student {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", faculty=" + faculty +
+                ", facultyId=" + facultyId +
                 '}';
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return id == student.id && age == student.age && Objects.equals(name, student.name)
-                && Objects.equals(faculty, student.faculty);
+        return id == student.id && age == student.age && facultyId == student.facultyId
+                && Objects.equals(name, student.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, faculty);
+        return Objects.hash(id, name, age, facultyId);
     }
 
+    // Геттеры и сеттеры
     public long getId() {
         return id;
     }
@@ -82,6 +85,14 @@ public class Student {
         this.age = age;
     }
 
+    public int getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(int facultyId) {
+        this.facultyId = facultyId;
+    }
+
     public Faculty getFaculty() {
         return faculty;
     }
@@ -90,4 +101,5 @@ public class Student {
         this.faculty = faculty;
     }
 }
+
 

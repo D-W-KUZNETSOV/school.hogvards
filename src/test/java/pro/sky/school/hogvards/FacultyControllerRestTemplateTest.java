@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import pro.sky.school.hogvards.controller.FacultyController;
 import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
+import pro.sky.school.hogvards.repositories.AvatarRepository;
 import pro.sky.school.hogvards.repositories.FacultyRepository;
 import pro.sky.school.hogvards.repositories.StudentRepository;
 
@@ -39,12 +40,18 @@ public class FacultyControllerRestTemplateTest {
     private StudentRepository studentRepository;
 
     @Autowired
+    private AvatarRepository avatarRepository;
+
+    @Autowired
     private TestRestTemplate restTemplate;
 
     @BeforeEach
     public void setUp() {
         studentRepository.deleteAll();
+        avatarRepository.deleteAll();
         facultyRepository.deleteAll();
+
+
 
 
     }

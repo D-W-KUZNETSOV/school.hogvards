@@ -35,6 +35,10 @@ public class AvatarController {
     public ResponseEntity<byte[]> downloadAvatar(@PathVariable Long id) {
         Avatar avatar = avatarService.findAvatarById(id);
 
+        if (avatar == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
         headers.setContentLength(avatar.getData().length);
@@ -48,9 +52,18 @@ public class AvatarController {
     @GetMapping(value = "/{id}/avatar-from-file")
     public void downloadAvatar(@PathVariable Long id, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.findAvatarById(id);
-
+        if (avatar == null) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return;
+        }
 
         Path path = Path.of(avatar.getFilePath());
+
+        if (!Files.exists(path)) {
+            response.setStatus(HttpStatus.NOT_FOUND.value());
+            return;
+        }
+
         try(InputStream is = Files.newInputStream(path);
             OutputStream os = response.getOutputStream();) {
             response.setStatus(200);

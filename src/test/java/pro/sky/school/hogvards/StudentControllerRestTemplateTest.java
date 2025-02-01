@@ -2,6 +2,7 @@ package pro.sky.school.hogvards;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -43,11 +44,12 @@ class StudentControllerRestTemplateTest {
 
     @Autowired
     private StudentRepository studentRepository;
-    @BeforeEach
-    public void setUp() {
+    @AfterEach
+    public void cleanup() {
         studentRepository.deleteAll();
         facultyRepository.deleteAll();
     }
+
 
     @Test
     void contextLoads() throws Exception {
@@ -127,32 +129,36 @@ class StudentControllerRestTemplateTest {
 
 
     @Test
-    public void testDeleteStudent() throws Exception {
-
+    public void testDeleteStudent() {
+        // Создаем факультет
         Faculty faculty = new Faculty();
         faculty.setName("Gryffindor");
         faculty.setColor("red");
         facultyRepository.save(faculty);
 
-
+        // Создаем студента
         Student student = new Student();
         student.setName("Hanna Abbot");
         student.setAge(16);
         student.setFaculty(faculty);
 
-
-        ResponseEntity<Student> savedStudentResponse = this.restTemplate.postForEntity("http://localhost:"
-                + port + "/student", student, Student.class);
+        // Сохраняем студента
+        ResponseEntity<Student> savedStudentResponse = this.restTemplate.postForEntity(
+                "http://localhost:" + port + "/students", student, Student.class);
         Student savedStudent = savedStudentResponse.getBody();
 
+        // Проверяем, что студент успешно сохранен
         assertThat(savedStudent).isNotNull();
         assertThat(savedStudent.getId()).isNotNull();
 
+        // Удаляем студента
+        this.restTemplate.delete("http://localhost:" + port + "/students/" + savedStudent.getId());
 
-        this.restTemplate.delete("http://localhost:" + port + "/student/" + savedStudent.getId());
+        // Пытаемся получить удаленного студента
+        ResponseEntity<Student> response = this.restTemplate.getForEntity(
+                "http://localhost:" + port + "/students/" + savedStudent.getId(), Student.class);
 
-        ResponseEntity<Student> response = this.restTemplate.getForEntity("http://localhost:"
-                + port + "/student/" + savedStudent.getId(), Student.class);
+        // Проверяем, что студент не найден
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 

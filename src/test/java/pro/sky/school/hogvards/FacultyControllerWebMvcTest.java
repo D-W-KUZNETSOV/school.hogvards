@@ -14,6 +14,7 @@ import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
 import pro.sky.school.hogvards.repositories.FacultyRepository;
 import pro.sky.school.hogvards.repositories.StudentRepository;
+import pro.sky.school.hogvards.service.AvatarService;
 import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import pro.sky.school.hogvards.service.StudentServiceImpl;
 
@@ -40,6 +41,9 @@ public class FacultyControllerWebMvcTest {
 
     @MockBean
     private FacultyRepository facultyRepository;
+
+    @MockBean
+    private AvatarService avatarService;
 
     @SpyBean
     private FacultyServiceImpl facultyService;

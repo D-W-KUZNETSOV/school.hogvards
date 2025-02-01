@@ -22,10 +22,10 @@ public class AvatarServiceImpl implements AvatarService {
 
     private final StudentRepository studentRepository;
 
-    private final int BUFFER_SIZE=1024;
+    private final int BUFFER_SIZE = 1024;
 
-@Value("${path.to.avatars.folder}")
-    private  String avatarsDirectory;
+    @Value("${path.to.avatars.folder}")
+    private String avatarsDirectory;
 
     public AvatarServiceImpl(AvatarRepository avatarRepository, StudentRepository studentRepository) {
         this.avatarRepository = avatarRepository;
@@ -34,21 +34,20 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public void uploadAvatar(Long studentId, MultipartFile avatarFile) throws IOException {
-            Student student = studentRepository.findById(studentId).orElseThrow();
-       Path avatarPath= saveToDisk(studentId,avatarFile);
-       saveToDatabase(student,avatarPath,avatarFile);
+        Student student = studentRepository.findById(studentId).orElseThrow();
+        Path avatarPath = saveToDisk(studentId, avatarFile);
+        saveToDatabase(student, avatarPath, avatarFile);
 
 
-
-        }
+    }
 
     @Override
     public Avatar findAvatarById(Long avatarId) {
         return avatarRepository.findById(avatarId).orElseThrow();
     }
 
-    private Path saveToDisk(Long studentId,MultipartFile avatarFile) throws IOException {
-        Path filePath = Path.of(avatarsDirectory, "avatar"+studentId + "." + getExtensions(avatarFile.getOriginalFilename()));
+    private Path saveToDisk(Long studentId, MultipartFile avatarFile) throws IOException {
+        Path filePath = Path.of(avatarsDirectory, "avatar" + studentId + "." + getExtensions(avatarFile.getOriginalFilename()));
 
 
         Files.createDirectories(filePath.getParent());
@@ -61,10 +60,10 @@ public class AvatarServiceImpl implements AvatarService {
         ) {
             bis.transferTo(bos);
         }
-        return  filePath;
+        return filePath;
     }
 
-    private void saveToDatabase(Student student,Path avatarPath,MultipartFile avatarFile) throws IOException {
+    private void saveToDatabase(Student student, Path avatarPath, MultipartFile avatarFile) throws IOException {
 
         Avatar avatar = findAvatar(student.getId());
 
@@ -77,16 +76,17 @@ public class AvatarServiceImpl implements AvatarService {
         avatarRepository.save(avatar);
 
     }
+
     private Avatar findAvatar(Long studentId) {
-return avatarRepository.findByStudent_id(studentId).orElse(
-        new Avatar()
-);
+        return avatarRepository.findByStudent_id(studentId).orElse(
+                new Avatar()
+        );
     }
 
 
-        private String getExtensions(String fileName) {
-            return fileName.substring(fileName.lastIndexOf(".") + 1);
-        }
-
+    private String getExtensions(String fileName) {
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
+}
 

@@ -16,6 +16,7 @@ import pro.sky.school.hogvards.repositories.FacultyRepository;
 import pro.sky.school.hogvards.repositories.StudentRepository;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import pro.sky.school.hogvards.service.AvatarServiceImpl;
 import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import pro.sky.school.hogvards.service.StudentServiceImpl;
 
@@ -38,6 +39,9 @@ public class StudentControllerWebMvcTest {
 
     @MockBean
     private FacultyRepository facultyRepository;
+
+    @MockBean
+    private AvatarServiceImpl avatarService;
 
     @SpyBean
     private StudentServiceImpl studentServiceImpl;
