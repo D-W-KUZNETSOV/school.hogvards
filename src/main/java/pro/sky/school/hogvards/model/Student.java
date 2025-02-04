@@ -3,6 +3,7 @@ package pro.sky.school.hogvards.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
+
 import java.util.Objects;
 
 @Entity
@@ -18,21 +19,24 @@ public class Student {
     @NotNull(message = "Faculty ID is required") // Поле обязательно
     @Min(value = 1, message = "Faculty ID must be a positive number") // ID должен быть положительным
     @Column(name = "faculty_id", nullable = false) // Столбец в базе данных не может быть null
-    private int facultyId;
+    private Long facultyId;
 
     @ManyToOne
-    @JoinColumn(name = "faculty_id", insertable = false, updatable = false) // Связь с Faculty, но не вставляется/обновляется
+    @JoinColumn(name = "faculty_id", insertable = false, updatable = false)
+
     private Faculty faculty;
 
-    // Конструктор с параметрами
-    public Student(long id, String name, int age, int facultyId) {
+
+
+
+    public Student(long id, String name, int age, Long facultyId) {
         this.id = id;
         this.name = name;
         this.age = age;
         this.facultyId = facultyId;
     }
 
-    // Конструктор по умолчанию
+
     public Student() {
     }
 
@@ -85,11 +89,11 @@ public class Student {
         this.age = age;
     }
 
-    public int getFacultyId() {
+    public @NotNull(message = "Faculty ID is required") @Min(value = 1, message = "Faculty ID must be a positive number") Long getFacultyId() {
         return facultyId;
     }
 
-    public void setFacultyId(int facultyId) {
+    public void setFacultyId(@NotNull(message = "Faculty ID is required") @Min(value = 1, message = "Faculty ID must be a positive number") Long facultyId) {
         this.facultyId = facultyId;
     }
 

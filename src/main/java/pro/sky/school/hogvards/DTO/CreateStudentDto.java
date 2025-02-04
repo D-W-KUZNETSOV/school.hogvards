@@ -7,23 +7,23 @@ public class CreateStudentDto {
 
     private String name;
     private int age;
+    private String faculty;
 
-
+    public String getFaculty() {
+        return faculty;
+    }
 
     @NotNull(message = "Faculty ID is required")
     @Min(value = 1, message = "Faculty ID must be a positive number")
-    public int getFacultyId() {
+    private Long facultyId;
+
+    public Long getFacultyId() {
         return facultyId;
     }
 
-    public void setFacultyId(@NotNull(message = "Faculty ID is required") @Min(value = 1, message = "Faculty ID must be a positive number") int facultyId) {
+    public void setFacultyId(Long facultyId) {
         this.facultyId = facultyId;
     }
-
-    @NotNull(message = "Faculty ID is required")
-    @Min(value = 1, message = "Faculty ID must be a positive number")
-    private int facultyId;
-
 
     public String getName() {
         return name;
@@ -41,5 +41,6 @@ public class CreateStudentDto {
         this.age = age;
     }
 }
+
 
 

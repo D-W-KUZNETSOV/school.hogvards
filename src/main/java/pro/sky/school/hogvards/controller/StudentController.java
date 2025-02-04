@@ -1,6 +1,7 @@
 package pro.sky.school.hogvards.controller;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,15 +49,8 @@ public class StudentController {
     }
 
     @PutMapping("/{id}")
-    public Student updateStudent(@PathVariable Long id, @RequestBody Student updatedStudent) {
-        return studentRepository.findById(id)
-                .map(existingStudent -> {
-                    existingStudent.setName(updatedStudent.getName());
-                    existingStudent.setAge(updatedStudent.getAge());
-                    existingStudent.setFaculty(updatedStudent.getFaculty());
-                    return studentRepository.save(existingStudent);
-                })
-                .orElseThrow(() -> new EntityNotFoundException("Student not found with id " + id));
+    public Student editStudent(@PathVariable Long id, @RequestBody @Valid CreateStudentDto createStudentDto) {
+        return studentServiceImpl.editStudent(id, createStudentDto);
     }
 
 

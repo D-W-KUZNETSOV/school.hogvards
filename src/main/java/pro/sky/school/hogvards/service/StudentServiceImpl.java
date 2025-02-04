@@ -46,12 +46,20 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Student editStudent(Student student) throws EntityNotFoundException {
-        if (!studentRepository.existsById(student.getId())) {
-            throw new EntityNotFoundException("Student with id " + student.getId() + " does not exist.");
-        }
-        return studentRepository.save(student);
+    public Student editStudent(Long studentId, CreateStudentDto createStudentDto) throws EntityNotFoundException {
+
+        Student existingStudent = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityNotFoundException("Student with id " + studentId + " does not exist."));
+
+
+        existingStudent.setName(createStudentDto.getName());
+        existingStudent.setAge(createStudentDto.getAge());
+        existingStudent.setFacultyId(createStudentDto.getFacultyId()); // Используем facultyId
+
+
+        return studentRepository.save(existingStudent);
     }
+
 
     @Override
     public boolean existsById(Long id) {

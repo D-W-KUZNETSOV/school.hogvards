@@ -16,8 +16,7 @@ public interface StudentService {
 
         Optional<Student> findStudent(long id);
 
-        Student editStudent(Student student) throws EntityNotFoundException;
-
+        Student editStudent(Long studentId, CreateStudentDto createStudentDto) throws EntityNotFoundException;
 
         boolean existsById(Long id);
 

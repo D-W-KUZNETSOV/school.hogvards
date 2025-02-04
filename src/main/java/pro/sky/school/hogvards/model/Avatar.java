@@ -24,6 +24,32 @@ public class Avatar {
     @JoinColumn(name = "student_id")
     private Student student;
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Avatar avatar = (Avatar) o;
+        return fileSize == avatar.fileSize && Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(mediaType, avatar.mediaType) && Objects.deepEquals(data, avatar.data) && Objects.equals(student, avatar.student);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, filePath, fileSize, mediaType, Arrays.hashCode(data), student);
+    }
+
+    @Override
+    public String toString() {
+        return "Avatar{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", fileSize=" + fileSize +
+                ", mediaType='" + mediaType + '\'' +
+                ", data=" + Arrays.toString(data) +
+                ", student=" + student +
+                '}';
+    }
+
     public Long getId() {
         return id;
     }
@@ -70,31 +96,6 @@ public class Avatar {
 
     public void setData(byte[] data) {
         this.data = data;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Avatar avatar = (Avatar) o;
-        return fileSize == avatar.fileSize && Objects.equals(id, avatar.id) && Objects.equals(filePath, avatar.filePath) && Objects.equals(mediaType, avatar.mediaType) && Objects.deepEquals(data, avatar.data) && Objects.equals(student, avatar.student);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, filePath, fileSize, mediaType, Arrays.hashCode(data), student);
-    }
-
-    @Override
-    public String toString() {
-        return "Avatar{" +
-                "id=" + id +
-                ", filePath='" + filePath + '\'' +
-                ", fileSize=" + fileSize +
-                ", mediaType='" + mediaType + '\'' +
-                ", data=" + Arrays.toString(data) +
-                ", student=" + student +
-                '}';
     }
 }
 
