@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.school.hogvards.controller.AvatarController;
 import pro.sky.school.hogvards.model.Avatar;
+import pro.sky.school.hogvards.repositories.AvatarRepository;
 import pro.sky.school.hogvards.service.AvatarServiceImpl;
 
 import java.nio.file.Files;
@@ -28,6 +29,9 @@ public class AvatarControllerWebMvcTest {
 
     @MockBean
     private AvatarServiceImpl avatarService;
+
+    @MockBean
+    private AvatarRepository avatarRepository;
 
     @Test
     public void testDownloadAvatarFromDb() throws Exception {
@@ -83,5 +87,6 @@ public class AvatarControllerWebMvcTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/avatars/1/avatar-from-db"))
                 .andExpect(status().isNotFound());
     }
+
 
 }

@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
+import pro.sky.school.hogvards.repositories.AvatarRepository;
 import pro.sky.school.hogvards.repositories.FacultyRepository;
 import pro.sky.school.hogvards.repositories.StudentRepository;
 import pro.sky.school.hogvards.service.AvatarService;
@@ -21,13 +22,13 @@ import pro.sky.school.hogvards.service.StudentServiceImpl;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 
 @WebMvcTest
@@ -44,6 +45,9 @@ public class FacultyControllerWebMvcTest {
 
     @MockBean
     private AvatarService avatarService;
+
+    @MockBean
+    AvatarRepository avatarRepository;
 
     @SpyBean
     private FacultyServiceImpl facultyService;
@@ -81,8 +85,9 @@ public class FacultyControllerWebMvcTest {
         verify(facultyRepository).save(any(Faculty.class));
 
     }
+
     @Test
-            public void testGetFaculty() throws Exception {
+    public void testGetFaculty() throws Exception {
         JSONObject facultyObjekt = new JSONObject();
         facultyObjekt.put("name", "Grifindor");
         facultyObjekt.put("color", "red");
@@ -107,8 +112,9 @@ public class FacultyControllerWebMvcTest {
 
         verify(facultyRepository).findById(1L);
     }
+
     @Test
-            public void testPutFaculty() throws Exception {
+    public void testPutFaculty() throws Exception {
 
         JSONObject facultyObjekt = new JSONObject();
         facultyObjekt.put("name", "Gryfindor");
@@ -141,10 +147,12 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$.name").value("Gryfindor"))
                 .andExpect(jsonPath("$.color").value("red"));
 
-        verify(facultyRepository).save(faculty);;
+        verify(facultyRepository).save(faculty);
+        ;
     }
+
     @Test
-            public void testDeleteFaculty()throws Exception {
+    public void testDeleteFaculty() throws Exception {
 
 
         JSONObject facultyObjekt = new JSONObject();

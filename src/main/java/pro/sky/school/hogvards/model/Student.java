@@ -16,17 +16,15 @@ public class Student {
     private String name;
     private int age;
 
-    @NotNull(message = "Faculty ID is required") // Поле обязательно
-    @Min(value = 1, message = "Faculty ID must be a positive number") // ID должен быть положительным
-    @Column(name = "faculty_id", nullable = false) // Столбец в базе данных не может быть null
+    @NotNull(message = "Faculty ID is required")
+    @Min(value = 1, message = "Faculty ID must be a positive number")
+    @Column(name = "faculty_id", nullable = false)
     private Long facultyId;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "faculty_id", insertable = false, updatable = false)
 
     private Faculty faculty;
-
-
 
 
     public Student(long id, String name, int age, Long facultyId) {

@@ -9,24 +9,24 @@ import java.util.Optional;
 
 public interface FacultyService {
 
-        Optional<Faculty> findFaculty(Long id);
+    Optional<Faculty> findFaculty(Long id);
 
-        Collection<Faculty> findByColor(String color);
+    Collection<Faculty> findByColor(String color);
 
-        Collection<Faculty> findByName(String name);
+    Collection<Faculty> findByName(String name);
 
-        Collection<Faculty> findAll();
+    Collection<Faculty> findAll();
 
-        Faculty addFaculty(Faculty faculty);
+    Faculty addFaculty(Faculty faculty);
 
-        Faculty editFaculty(Faculty faculty);
+    Faculty editFaculty(Faculty faculty);
 
-        void deleteFaculty(long id);
+    void deleteFaculty(long id);
 
-        Collection<Student> getStudentsOfFaculty(Long id);
+    Collection<Student> getStudentsOfFaculty(Long id);
 
-        boolean existsById(Long id);
+    boolean existsById(Long id);
 
-    }
+}
 
 

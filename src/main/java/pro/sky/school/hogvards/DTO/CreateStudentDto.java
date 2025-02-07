@@ -1,28 +1,40 @@
 package pro.sky.school.hogvards.DTO;
 
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateStudentDto {
 
-    private String name;
-    private int age;
-    private String faculty;
+    @NotNull(message = "ID is required")
+    private Long id;
 
-    public String getFaculty() {
-        return faculty;
-    }
+    @NotNull(message = "Name is required")
+    private String name;
+
+    @NotNull(message = "Age is required")
+    @Min(value = 1, message = "Age must be a positive number")
+    private int age;
 
     @NotNull(message = "Faculty ID is required")
-    @Min(value = 1, message = "Faculty ID must be a positive number")
     private Long facultyId;
 
-    public Long getFacultyId() {
-        return facultyId;
+    public CreateStudentDto(String name, int age, Long facultyId) {
+        this.name = name;
+        this.age = age;
+        this.facultyId = facultyId;
     }
 
-    public void setFacultyId(Long facultyId) {
-        this.facultyId = facultyId;
+    public CreateStudentDto() {
+
+    }
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -40,7 +52,16 @@ public class CreateStudentDto {
     public void setAge(int age) {
         this.age = age;
     }
+
+    public Long getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(Long facultyId) {
+        this.facultyId = facultyId;
+    }
 }
+
 
 
 

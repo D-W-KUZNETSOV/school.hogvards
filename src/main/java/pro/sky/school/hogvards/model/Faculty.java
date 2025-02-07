@@ -29,6 +29,7 @@ public class Faculty {
         this.color = color;
     }
 
+
     public static Faculty newFaculty(Long id, String name, String color) {
         Faculty faculty = new Faculty();
         faculty.setId(id);
@@ -66,7 +67,7 @@ public class Faculty {
                 '}';
     }
 
-    // Геттеры и сеттеры
+
     public Long getId() {
         return id;
     }

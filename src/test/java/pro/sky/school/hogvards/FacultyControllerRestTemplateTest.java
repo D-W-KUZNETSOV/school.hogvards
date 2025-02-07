@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 import pro.sky.school.hogvards.controller.FacultyController;
 import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("test")
 public class FacultyControllerRestTemplateTest {
 
     @LocalServerPort
@@ -47,13 +49,9 @@ public class FacultyControllerRestTemplateTest {
 
     @BeforeEach
     public void setUp() {
-        studentRepository.deleteAll();
         avatarRepository.deleteAll();
+        studentRepository.deleteAll();
         facultyRepository.deleteAll();
-
-
-
-
     }
 
     @Test
@@ -155,13 +153,13 @@ public class FacultyControllerRestTemplateTest {
         Student student1 = new Student();
         student1.setName("Hanna Abbot");
         student1.setAge(15);
-        student1.setFaculty(faculty);
+        student1.setFacultyId(faculty.getId());
         studentRepository.save(student1);
 
         Student student2 = new Student();
         student2.setName("Drako Malfoy");
         student2.setAge(16);
-        student2.setFaculty(faculty);
+        student2.setFacultyId(faculty.getId());
         studentRepository.save(student2);
 
 

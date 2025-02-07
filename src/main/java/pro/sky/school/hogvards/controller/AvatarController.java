@@ -1,15 +1,14 @@
 package pro.sky.school.hogvards.controller;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pro.sky.school.hogvards.model.Avatar;
+import pro.sky.school.hogvards.repositories.AvatarRepository;
 import pro.sky.school.hogvards.service.AvatarService;
 
 import java.io.IOException;
@@ -17,17 +16,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 @RestController
 @RequestMapping("avatars")
 public class AvatarController {
 
 
-
     private final AvatarService avatarService;
+    private final AvatarRepository avatarRepository;
 
-    public AvatarController(AvatarService avatarService) {
+    public AvatarController(AvatarService avatarService, AvatarRepository avatarRepository) {
         this.avatarService = avatarService;
+        this.avatarRepository = avatarRepository;
     }
 
 
@@ -64,13 +65,24 @@ public class AvatarController {
             return;
         }
 
-        try(InputStream is = Files.newInputStream(path);
-            OutputStream os = response.getOutputStream();) {
+        try (InputStream is = Files.newInputStream(path);
+             OutputStream os = response.getOutputStream();) {
+
             response.setStatus(200);
             response.setContentType(avatar.getMediaType());
             response.setContentLength((int) avatar.getFileSize());
             is.transferTo(os);
         }
     }
+
+    @GetMapping
+    public List<Avatar> getAllAvatar(@RequestParam(defaultValue = "1") Integer pageNumber,
+                                     @RequestParam(defaultValue = "5") Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        List<Avatar> avatars = avatarRepository.findAll(pageRequest).getContent();
+
+        return avatars;
+    }
+
 
 }
