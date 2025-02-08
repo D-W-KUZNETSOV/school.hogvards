@@ -57,14 +57,12 @@ public class AvatarController {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             return;
         }
-
         Path path = Path.of(avatar.getFilePath());
 
         if (!Files.exists(path)) {
             response.setStatus(HttpStatus.NOT_FOUND.value());
             return;
         }
-
         try (InputStream is = Files.newInputStream(path);
              OutputStream os = response.getOutputStream();) {
 
@@ -78,6 +76,7 @@ public class AvatarController {
     @GetMapping
     public List<Avatar> getAllAvatar(@RequestParam(defaultValue = "1") Integer pageNumber,
                                      @RequestParam(defaultValue = "5") Integer pageSize) {
+
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         List<Avatar> avatars = avatarRepository.findAll(pageRequest).getContent();
 
