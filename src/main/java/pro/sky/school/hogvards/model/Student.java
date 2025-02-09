@@ -1,12 +1,12 @@
 package pro.sky.school.hogvards.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Min;
 
 import java.util.Objects;
 
-
 @Entity
-@Table(name = "student")
 public class Student {
 
     @Id
@@ -16,21 +16,26 @@ public class Student {
     private String name;
     private int age;
 
+    @NotNull(message = "Faculty ID is required")
+    @Min(value = 1, message = "Faculty ID must be a positive number")
+    @Column(name = "faculty_id", nullable = false)
+    private Long facultyId;
 
-    @ManyToOne
-    @JoinColumn(name = "faculty_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "faculty_id", insertable = false, updatable = false)
+
     private Faculty faculty;
 
-    public Student(long id, String name, int age, Faculty faculty) {
+
+    public Student(long id, String name, int age, Long facultyId) {
         this.id = id;
         this.name = name;
         this.age = age;
-        this.faculty = faculty;
+        this.facultyId = facultyId;
     }
 
 
     public Student() {
-
     }
 
     @Override
@@ -39,25 +44,25 @@ public class Student {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", faculty=" + faculty +
+                ", facultyId=" + facultyId +
                 '}';
     }
-
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return id == student.id && age == student.age && Objects.equals(name, student.name)
-                && Objects.equals(faculty, student.faculty);
+        return id == student.id && age == student.age && facultyId == student.facultyId
+                && Objects.equals(name, student.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, faculty);
+        return Objects.hash(id, name, age, facultyId);
     }
 
+    // Геттеры и сеттеры
     public long getId() {
         return id;
     }
@@ -82,6 +87,14 @@ public class Student {
         this.age = age;
     }
 
+    public @NotNull(message = "Faculty ID is required") @Min(value = 1, message = "Faculty ID must be a positive number") Long getFacultyId() {
+        return facultyId;
+    }
+
+    public void setFacultyId(@NotNull(message = "Faculty ID is required") @Min(value = 1, message = "Faculty ID must be a positive number") Long facultyId) {
+        this.facultyId = facultyId;
+    }
+
     public Faculty getFaculty() {
         return faculty;
     }
@@ -90,4 +103,5 @@ public class Student {
         this.faculty = faculty;
     }
 }
+
 

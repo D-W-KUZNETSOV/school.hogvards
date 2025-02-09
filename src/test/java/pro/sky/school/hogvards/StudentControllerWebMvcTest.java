@@ -9,19 +9,23 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import pro.sky.school.hogvards.DTO.CreateStudentDto;
 import pro.sky.school.hogvards.controller.StudentController;
 import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
+import pro.sky.school.hogvards.repositories.AvatarRepository;
 import pro.sky.school.hogvards.repositories.FacultyRepository;
 import pro.sky.school.hogvards.repositories.StudentRepository;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import pro.sky.school.hogvards.service.AvatarServiceImpl;
 import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import pro.sky.school.hogvards.service.StudentServiceImpl;
 
 import java.util.Arrays;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -39,6 +43,12 @@ public class StudentControllerWebMvcTest {
     @MockBean
     private FacultyRepository facultyRepository;
 
+    @MockBean
+    private AvatarRepository avatarRepository;
+
+    @MockBean
+    private AvatarServiceImpl avatarService;
+
     @SpyBean
     private StudentServiceImpl studentServiceImpl;
 
@@ -55,22 +65,20 @@ public class StudentControllerWebMvcTest {
     public void testPostStudent() throws Exception {
 
         Faculty faculty = createFaculty("Gryffindor", "Red");
-
+        when(facultyRepository.findById(1L)).thenReturn(Optional.of(faculty));
         when(facultyRepository.save(any(Faculty.class))).thenReturn(faculty);
 
 
-        JSONObject studentObject = new JSONObject();
-        studentObject.put("name", "Garry Potter");
-        studentObject.put("age", 15);
-        studentObject.put("facultyId", 1);
+        CreateStudentDto createStudentDto = new CreateStudentDto("Garry Potter", 15, 1L);
 
 
         Student student = createStudent(1L, "Garry Potter", 15, faculty);
-
         when(studentRepository.save(any(Student.class))).thenReturn(student);
+
+
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/student")
-                        .content(objectMapper.writeValueAsString(student))
+                        .content(new ObjectMapper().writeValueAsString(createStudentDto))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -78,8 +86,10 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.age").value(15))
                 .andExpect(jsonPath("$.faculty.name").value("Gryffindor"));
 
+
         verify(studentRepository).save(any(Student.class));
     }
+
 
     private Faculty createFaculty(String name, String color) {
         Faculty faculty = new Faculty();
@@ -152,10 +162,23 @@ public class StudentControllerWebMvcTest {
     @Test
     public void testDeleteStudent() throws Exception {
 
-        Student student = createStudent(1L, "Garry Potter", 15, null);
+        JSONObject studentObject = new JSONObject();
+        studentObject.put("id", 1);
+        studentObject.put("name", "Garry Potter");
+        studentObject.put("age", 15);
+        studentObject.put("facultyId", 1);
 
 
-        when(studentRepository.findById(1L)).thenReturn(Optional.of(student));
+        CreateStudentDto createStudentDto = new CreateStudentDto();
+        createStudentDto.setId(1L);
+        createStudentDto.setName("Garry Potter");
+        createStudentDto.setAge(15);
+
+
+        Student student = new Student(createStudentDto.getId(), createStudentDto.getName(), createStudentDto.getAge(), null);
+
+
+        when(studentRepository.existsById(1L)).thenReturn(true);
 
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -165,6 +188,27 @@ public class StudentControllerWebMvcTest {
 
 
         verify(studentRepository, times(1)).deleteById(1L);
+
+
+        when(studentRepository.findById(1L)).thenReturn(Optional.empty());
+        Optional<Student> deletedStudent = studentRepository.findById(1L);
+        assertFalse(deletedStudent.isPresent(), "Student should be deleted");
+    }
+
+
+    @Test
+    public void testDeleteStudentNotFound() throws Exception {
+
+        when(studentRepository.findById(1L)).thenReturn(Optional.empty());
+
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .delete("/student/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+
+        verify(studentRepository, never()).deleteById(1L);
     }
 
 

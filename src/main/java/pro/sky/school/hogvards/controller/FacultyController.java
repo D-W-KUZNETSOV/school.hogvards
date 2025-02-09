@@ -1,9 +1,7 @@
 package pro.sky.school.hogvards.controller;
 
 import jakarta.validation.Valid;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pro.sky.school.hogvards.model.Faculty;
 import pro.sky.school.hogvards.model.Student;
@@ -14,25 +12,21 @@ import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import java.util.Collection;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/faculty")
 public class FacultyController {
     private final FacultyRepository facultyRepository;
     private final FacultyServiceImpl facultyServiceImpl;
-
-
     private final StudentRepository studentRepository;
 
-    public FacultyController(FacultyRepository facultyRepository, FacultyServiceImpl facultyServiceImpl
-            , StudentRepository studentRepository) {
+    public FacultyController(FacultyRepository facultyRepository, FacultyServiceImpl facultyServiceImpl,
+                             StudentRepository studentRepository) {
         this.facultyRepository = facultyRepository;
         this.facultyServiceImpl = facultyServiceImpl;
         this.studentRepository = studentRepository;
     }
 
-
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public Faculty getFacultyInfo(@PathVariable Long id) {
         return facultyServiceImpl.findFaculty(id).orElse(null);
     }
@@ -50,52 +44,40 @@ public class FacultyController {
     }
 
     @PostMapping
-    public ResponseEntity<Faculty> addFaculty(@Valid @RequestBody Faculty faculty) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public Faculty addFaculty(@Valid @RequestBody Faculty faculty) {
         if (facultyRepository.existsByName(faculty.getName())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            throw new IllegalArgumentException("Faculty with this name already exists");
         }
-        Faculty savedFaculty = facultyRepository.save(faculty);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedFaculty);
+        return facultyRepository.save(faculty);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Faculty> updateFaculty(@PathVariable Long id,
-                                                 @RequestBody Faculty faculty) {
-        // Убедитесь, что переданный объект faculty не null
+    public Faculty updateFaculty(@PathVariable Long id, @RequestBody Faculty faculty) {
         if (faculty == null) {
-            return ResponseEntity.badRequest().build(); // Возвращаем 400 Bad Request
+            throw new IllegalArgumentException("Faculty cannot be null");
         }
-
-        // Устанавливаем id для обновления
         faculty.setId(id);
-
-        // Проверяем, существует ли факультет с данным id
-        Faculty updatedFaculty = facultyServiceImpl.editFaculty(faculty);
-        if (updatedFaculty == null) {
-            return ResponseEntity.notFound().build(); // Возвращаем 404 Not Found, если факультет не найден
-        }
-
-        return ResponseEntity.ok(updatedFaculty); // Возвращаем 200 OK с обновленным объектом
+        return facultyServiceImpl.editFaculty(faculty);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteFaculty(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteFaculty(@PathVariable Long id) {
         if (!facultyServiceImpl.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new IllegalArgumentException("Faculty not found");
         }
         facultyServiceImpl.deleteFaculty(id);
-        return ResponseEntity.noContent().build();
     }
+
     @GetMapping("/{id}/students")
-    public ResponseEntity<List<Student>> getStudentsByFacultyId(@PathVariable Long id) {
+    public List<Student> getStudentsByFacultyId(@PathVariable Long id) {
         List<Student> students = studentRepository.findByFacultyId(id);
-
         if (students.isEmpty()) {
-            return ResponseEntity.notFound().build(); // Возвращаем 404, если студентов нет
+            throw new IllegalArgumentException("No students found for this faculty");
         }
-
-        return ResponseEntity.ok(students); // Возвращаем 200 с найденными студентами
+        return students;
     }
-
 }
+
 

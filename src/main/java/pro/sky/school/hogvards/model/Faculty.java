@@ -13,7 +13,6 @@ public class Faculty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String color;
 
@@ -30,8 +29,14 @@ public class Faculty {
         this.color = color;
     }
 
-    public static Faculty newFaculty() {
-        return new Faculty();
+
+    public static Faculty newFaculty(Long id, String name, String color) {
+        Faculty faculty = new Faculty();
+        faculty.setId(id);
+        faculty.setName(name);
+        faculty.setColor(color);
+
+        return faculty;
     }
 
     @Override
@@ -62,7 +67,7 @@ public class Faculty {
                 '}';
     }
 
-    // Геттеры и сеттеры
+
     public Long getId() {
         return id;
     }
