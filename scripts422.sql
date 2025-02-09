@@ -1,11 +1,24 @@
-create table person(id serial primary key
-,name text,
-age int,is_license boolean
+CREATE TABLE person (
+    id SERIAL PRIMARY KEY,
+    name TEXT,
+    age INTEGER,
+    is_license BOOLEAN
 );
-create table auto(id_serial primary key
-person_id INT
-,brand text,
-model text,
-price varchar,
-foreign key (person_id)references person(id)
+
+CREATE TABLE auto (
+    id SERIAL PRIMARY KEY,
+    person_id INTEGER,
+    brand TEXT,
+    model TEXT,
+    price VARCHAR,
+    FOREIGN KEY (person_id) REFERENCES person(id)
 );
+
+CREATE TABLE person_auto (
+    person_id INTEGER,
+    auto_id INTEGER,
+    PRIMARY KEY (person_id, auto_id),
+    FOREIGN KEY (person_id) REFERENCES person(id),
+    FOREIGN KEY (auto_id) REFERENCES auto(id)
+);
+
