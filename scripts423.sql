@@ -1,5 +1,10 @@
-select s.name,s.age from student s
-left join faculty f on(s.faculty_id=f.id)
+SELECT s.name, s.age
+FROM student s
+LEFT JOIN faculty f ON (s.faculty_id = f.id)
+WHERE f.name = 'Grifindor';
 
-select * from student s
-join avatar a on (s.id=a.student_id)
+SELECT s.*, a.*
+FROM student s
+JOIN avatar a ON (s.id = a.student_id);
+
+
