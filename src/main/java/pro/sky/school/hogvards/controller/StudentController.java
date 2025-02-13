@@ -70,6 +70,11 @@ public class StudentController {
         return studentServiceImpl.editStudent(id, createStudentDto);
     }
 
+    @GetMapping("name/{name}")
+    List<Student> findByName(@PathVariable String name) {
+        return (List<Student>) studentRepository.findByname(name);
+    }
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteStudent(@PathVariable Long id) {

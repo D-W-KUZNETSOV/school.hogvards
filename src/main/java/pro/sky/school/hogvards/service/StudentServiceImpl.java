@@ -90,5 +90,10 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findByFacultyId(facultyId);
     }
 
+    @Override
+    public List<Student> findByName(String name) {
+        return List.of();
+    }
+
 }
 
