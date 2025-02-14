@@ -72,7 +72,7 @@ public class StudentController {
 
     @GetMapping("name/{name}")
     List<Student> findByName(@PathVariable String name) {
-        return (List<Student>) studentRepository.findByname(name);
+        return (List<Student>) studentRepository.findByName(name);
     }
 
     @DeleteMapping("/{id}")

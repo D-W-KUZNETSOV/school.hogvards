@@ -276,6 +276,31 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("Garry Potter"));
     }
+    @Test
+    public void testFindByName()throws Exception {
+        Faculty faculty = new Faculty();
+        faculty.setId(1L);
+        faculty.setName("Hufflepuff");
+        faculty.setColor("Yellow");
+        faculty = facultyRepository.save(faculty);
+
+
+        Student student = new Student();
+        student.setId(1L);
+        student.setName("Garry Potter");
+        student.setAge(15);
+        student.setFaculty(faculty);
+        studentRepository.save(student);
+
+        when(studentRepository.findByName(student.getName())).thenReturn(Arrays.asList(student));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .get("/student/name/{name}",student.getName())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].name").value("Garry Potter"));
+
+    }
 
 
 }
