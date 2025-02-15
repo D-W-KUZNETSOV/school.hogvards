@@ -31,6 +31,8 @@ public interface StudentService {
 
     List<Student> getStudentsByFacultyId(Long id);
 
+    List<Student> findByName(String name);
+
 
 }
 
