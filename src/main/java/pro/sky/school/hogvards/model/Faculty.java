@@ -8,11 +8,16 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "faculty")
+@SequenceGenerator(name = "faculty_sequence", sequenceName = "faculty_sequence", allocationSize = 1)
+
+
 public class Faculty {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "faculty_sequence")
     private Long id;
+
+
     private String name;
     private String color;
 

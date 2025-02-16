@@ -82,24 +82,22 @@ public class FacultyControllerRestTemplateTest {
     @Test
     void testPutFaculty() throws Exception {
 
-        Faculty savedFaculty = new Faculty();
-        savedFaculty.setName("Grifindor");
-        savedFaculty.setColor("red");
-        savedFaculty = facultyRepository.save(savedFaculty);
+        Faculty faculty = new Faculty();
+        faculty.setName("Grifindor");
+        faculty.setColor("red");
+        faculty = facultyRepository.save(faculty);
 
-
-        Faculty existingFaculty = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/" + savedFaculty.getId()
+        Faculty existingFaculty = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/" + faculty.getId()
                 , Faculty.class);
 
         assertThat(existingFaculty).isNotNull();
 
-
         existingFaculty.setName("Huflepuf");
         existingFaculty.setColor("yellow");
-        this.restTemplate.put("http://localhost:" + port + "/faculty/" + savedFaculty.getId(), existingFaculty);
+        existingFaculty.setId(faculty.getId());
+        this.restTemplate.put("http://localhost:" + port + "/faculty/" + faculty.getId(), existingFaculty);
 
-
-        Faculty updatedFaculty = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/" + savedFaculty.getId()
+        Faculty updatedFaculty = this.restTemplate.getForObject("http://localhost:" + port + "/faculty/" + faculty.getId()
                 , Faculty.class);
 
         assertThat(updatedFaculty).isNotNull();
