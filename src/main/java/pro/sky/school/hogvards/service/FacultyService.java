@@ -27,6 +27,8 @@ public interface FacultyService {
 
     boolean existsById(Long id);
 
+    String getLongestFacultyName();
+
 }
 
 

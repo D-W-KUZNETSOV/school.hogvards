@@ -151,6 +151,13 @@ public class FacultyServiceImpl implements FacultyService {
                     return List.of();
                 });
     }
+
+    public String getLongestFacultyName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .reduce((first, second) -> first.length() >= second.length() ? first : second)
+                .orElse("No facultyes");
+    }
 }
 
 

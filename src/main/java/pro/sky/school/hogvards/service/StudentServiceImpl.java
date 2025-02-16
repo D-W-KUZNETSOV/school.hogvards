@@ -20,7 +20,6 @@ public class StudentServiceImpl implements StudentService {
     private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
 
 
-
     private final StudentRepository studentRepository;
 
     @Autowired
@@ -89,7 +88,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public boolean existsById(Long id) {
-        logger.info("Was invoked method for search student with id: {}",id);
+        logger.info("Was invoked method for search student with id: {}", id);
         return studentRepository.existsById(id);
     }
 
@@ -159,6 +158,27 @@ public class StudentServiceImpl implements StudentService {
         logger.debug("Number of students found with name '{}': {}", name, students.size());
 
         return students;
+    }
+
+    @Override
+    public List<String> getAllStudentsNamesStartingWithA() {
+        return studentRepository.findAll()
+                .stream()
+                .map(Student::getName)
+                .filter(it -> it.startsWith("A"))
+                .map(String::toUpperCase)
+                .sorted()
+                .toList();
+
+
+    }
+
+    @Override
+    public double getMiddleAge() {
+        return studentRepository.findAll().stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElse(0.0);
     }
 
 }

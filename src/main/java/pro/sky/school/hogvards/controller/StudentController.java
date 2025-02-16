@@ -120,6 +120,15 @@ public class StudentController {
         return studentRepository.findTop5ByOrderByIdDesc((Pageable) PageRequest.of(0, count));
     }
 
+    @GetMapping("/students/names/startWithA")
+    public List<String> getAllStudentsNamesStartingWithA() {
+        return studentServiceImpl.getAllStudentsNamesStartingWithA();
+    }
+    @GetMapping("/students/middleAge")
+    public double getMiddleAge() {
+        return studentServiceImpl.getMiddleAge();
+    }
+
 }
 
 

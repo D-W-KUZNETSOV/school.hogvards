@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -208,7 +209,35 @@ public class FacultyControllerWebMvcTest {
                 .andExpect(jsonPath("$[0].name").value("Hanna Abbot"))
                 .andExpect(jsonPath("$[1].name").value("Drako Malfoy"));
     }
+
+    @Test
+    public void testGetLongestFacultyName() {
+
+        List<Faculty> faculties = Arrays.asList(
+                new Faculty(1L, "Grifindor", "red"),
+                new Faculty(2L, "Slyzerin", "green"),
+                new Faculty(3L, "Huflepuf", "blue"),
+                new Faculty(4L, "Rawhenklow", "yellow")
+        );
+
+        when(facultyRepository.findAll()).thenReturn(faculties);
+
+        String expectedName = "Rawhenklow";
+
+        String actualName = facultyService.getLongestFacultyName();
+
+        assertEquals(expectedName, actualName);
+    }
+    @Test
+    public void testGetLongestFacultyNameWhenNoFaculties() {
+        when(facultyRepository.findAll()).thenReturn(Arrays.asList());
+        String expectedName = "No facultyes";
+        String actualName = facultyService.getLongestFacultyName();
+
+        assertEquals(expectedName, actualName);
+    }
 }
+
 
 
 
