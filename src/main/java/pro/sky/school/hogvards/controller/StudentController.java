@@ -21,6 +21,7 @@ import jakarta.validation.Valid;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -62,7 +63,7 @@ public class StudentController {
     @GetMapping("/{id}")
     public Student findStudentById(@PathVariable Long id) {
         return studentServiceImpl.findStudent(id)
-                .orElseThrow(() -> new StudentNotFoundException(id)); // Используем собственное исключение
+                .orElseThrow(() -> new StudentNotFoundException(id));
     }
 
     @PutMapping("/{id}")
@@ -129,6 +130,21 @@ public class StudentController {
         return studentServiceImpl.getMiddleAge();
     }
 
+    @GetMapping("/print-parallel")
+    public void printStudentsParallel() {
+       studentServiceImpl.printStudentsParallel();
+    }
+
+
+    @GetMapping("/print-synchronized")
+    public void printStudentsSynchronized() {
+        studentServiceImpl.printStudentsSynchronize();
+    }
 }
+
+
+
+
+
 
 

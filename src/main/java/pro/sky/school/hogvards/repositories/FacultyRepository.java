@@ -16,4 +16,6 @@ public interface FacultyRepository extends JpaRepository<Faculty, Long> {
 
     boolean existsByName(String name);
 
+
+
 }

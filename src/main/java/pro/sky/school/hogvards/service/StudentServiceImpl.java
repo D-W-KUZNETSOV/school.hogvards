@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -181,5 +182,67 @@ public class StudentServiceImpl implements StudentService {
                 .orElse(0.0);
     }
 
+    @Override
+    public void printStudentsParallel() {
+        List<Student> student = studentRepository.findAll();
+
+        System.out.println(student.get(0).getName());
+        System.out.println(student.get(1).getName());
+
+        new Thread(() -> {
+
+            System.out.println(student.get(2).getName());
+            System.out.println(student.get(3).getName());
+        }).start();
+
+        new Thread(() -> {
+
+            System.out.println(student.get(4).getName());
+            System.out.println(student.get(5).getName());
+        }).start();
+
+    }
+
+    private synchronized void printStudentName(String name) {
+        System.out.println(name);
+    }
+
+    @Override
+    public void printStudentsSynchronize() {
+        List<Student> students = studentRepository.findAll();
+
+        synchronized (this) {
+            System.out.println(Thread.currentThread().getName() + " захватил блокировку для первых двух студентов.");
+            printStudentName(students.get(0).getName());
+            printStudentName(students.get(1).getName());
+            System.out.println(Thread.currentThread().getName() + " освободил блокировку для первых двух студентов.");
+        }
+
+
+        Thread thread1 = new Thread(() -> {
+            synchronized (this) {
+                System.out.println(Thread.currentThread().getName() + " захватил блокировку для третьего и четвертого студентов.");
+                printStudentName(students.get(2).getName());
+                printStudentName(students.get(3).getName());
+                System.out.println(Thread.currentThread().getName() + " освободил блокировку для третьего и четвертого студентов.");
+            }
+        }, "Thread-1");
+
+
+        Thread thread2 = new Thread(() -> {
+            synchronized (this) {
+                System.out.println(Thread.currentThread().getName() + " захватил блокировку для пятого и шестого студентов.");
+                printStudentName(students.get(4).getName());
+                printStudentName(students.get(5).getName());
+                System.out.println(Thread.currentThread().getName() + " освободил блокировку для пятого и шестого студентов.");
+            }
+        }, "Thread-2");
+
+        thread1.start();
+        thread2.start();
+    }
 }
+
+
+
 
