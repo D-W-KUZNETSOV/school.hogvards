@@ -63,7 +63,7 @@ public class AvatarServiceImpl implements AvatarService {
     public Avatar findAvatarById(Long avatarId) {
         return avatarRepository.findById(avatarId)
                 .orElseThrow(() -> {
-                    String errorMessage = "Аватар с ID " + avatarId + " не найден!";
+                    String errorMessage = "Avatar with ID " + avatarId + " not found!";
                     logger.error(errorMessage);
                     return new NoSuchElementException(errorMessage);
                 });
@@ -108,9 +108,9 @@ public class AvatarServiceImpl implements AvatarService {
 
         try {
             avatarRepository.save(avatar);
-            logger.info("Аватар успешно сохранен для студента с ID: " + student.getId());
+            logger.info("Avatar successfully saved for student ID: " + student.getId());
         } catch (Exception e) {
-            logger.error("Ошибка при сохранении аватара в базу данных: " + e.getMessage(), e);
+            logger.error("Error when saving avatar to database: " + e.getMessage(), e);
             throw e;
         }
 

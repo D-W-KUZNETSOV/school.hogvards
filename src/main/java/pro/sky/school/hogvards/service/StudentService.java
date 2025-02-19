@@ -2,7 +2,6 @@ package pro.sky.school.hogvards.service;
 
 
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.data.jpa.repository.Query;
 import pro.sky.school.hogvards.DTO.CreateStudentDto;
 import pro.sky.school.hogvards.model.Student;
 
@@ -32,6 +31,18 @@ public interface StudentService {
     List<Student> getStudentsByFacultyId(Long id);
 
     List<Student> findByName(String name);
+
+    List<String> getAllStudentsNamesStartingWithA();
+
+    void printStudentsParallel();
+
+    void printStudentsSynchronize();
+
+
+    double getMiddleAge();
+
+
+
 
 
 }

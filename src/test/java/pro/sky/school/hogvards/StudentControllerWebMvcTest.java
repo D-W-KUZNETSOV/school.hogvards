@@ -23,8 +23,10 @@ import pro.sky.school.hogvards.service.FacultyServiceImpl;
 import pro.sky.school.hogvards.service.StudentServiceImpl;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -276,8 +278,9 @@ public class StudentControllerWebMvcTest {
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$[0].name").value("Garry Potter"));
     }
+
     @Test
-    public void testFindByName()throws Exception {
+    public void testFindByName() throws Exception {
         Faculty faculty = new Faculty();
         faculty.setId(1L);
         faculty.setName("Hufflepuff");
@@ -295,15 +298,70 @@ public class StudentControllerWebMvcTest {
         when(studentRepository.findByName(student.getName())).thenReturn(Arrays.asList(student));
 
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/student/name/{name}",student.getName())
+                        .get("/student/name/{name}", student.getName())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name").value("Garry Potter"));
 
     }
 
+    @Test
+    public void testGetMiddleAge() {
+        List<Student> students = Arrays.asList(
+                new Student(1L, "Garry Potter", 20, 1L),
+                new Student(2, "Draco Malfoy", 22, 2L),
+                new Student(3, "Ron Uizly", 24, 1L)
+        );
 
+        when(studentRepository.findAll()).thenReturn(students);
+
+        double expectedMiddleAge = (20 + 22 + 24) / 3.0;
+
+        double actualMiddleAge = studentServiceImpl.getMiddleAge();
+
+        assertEquals(expectedMiddleAge, actualMiddleAge);
+    }
+
+    @Test
+    public void testGetMiddleAgeWhenNoStudents() {
+
+        when(studentRepository.findAll()).thenReturn(Arrays.asList());
+        double expectedMiddleAge = 0.0;
+        double actualMiddleAge = studentServiceImpl.getMiddleAge();
+        assertEquals(expectedMiddleAge, actualMiddleAge);
+    }
+
+    @Test
+    public void getAllStudentsNamesStartingWithA() {
+
+        List<Student> students = Arrays.asList(
+                new Student(1L, "Garry Potter", 20, 1L),
+                new Student(2, "Amanda Rudgen", 22, 2L),
+                new Student(3, "Anna Abbot", 24, 1L)
+        );
+        when(studentRepository.findAll()).thenReturn(students);
+
+        List<String> expectedNames = Arrays.asList("AMANDA RUDGEN", "ANNA ABBOT");
+        List<String> actualNames = studentServiceImpl.getAllStudentsNamesStartingWithA();
+
+        assertEquals(expectedNames, actualNames);
+    }
+    @Test
+    public void testGetAllStudentsNamesStartingWithAWhenNoStudents() {
+
+        when(studentRepository.findAll()).thenReturn(Arrays.asList());
+
+        List<String> expectedNames = Arrays.asList();
+
+        List<String> actualNames = studentServiceImpl.getAllStudentsNamesStartingWithA();
+
+        assertEquals(expectedNames, actualNames);
+    }
 }
+
+
+
+
 
 
 
