@@ -15,6 +15,60 @@ mvnw.cmd
 .springBeans
 .sts4-cache
 
+# ============================
+# Секретные файлы конфигурации
+# ============================
+
+# Файлы с паролями и ключами
+application-secret.properties
+application-prod.properties
+application-local.properties
+*.secret
+*.key
+*.pem
+
+# Файлы окружения
+.env
+.env.local
+.env.development
+.env.production
+.env.*
+!.env.example  # Исключение: пример файла можно коммитить
+
+# Папки с секретами
+secrets/
+config/private/
+
+# ============================
+# Файлы IDE и системы
+# ============================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ============================
+# Сборка и логи
+# ============================
+target/
+build/
+out/
+*.log
+logs/
+
+# ============================
+# Базы данных и временные файлы
+# ============================
+*.db
+*.sqlite
+tmp/
+temp/
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
