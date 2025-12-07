@@ -23,5 +23,4 @@
 git clone https://github.com/D-W-KUZNETSOV/school.hogvards.git
 cd school.hogvards
 
-# Запуск приложения
-docker-compose up -d
+
