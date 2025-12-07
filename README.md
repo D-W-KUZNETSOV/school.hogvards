@@ -49,5 +49,13 @@ createdb hogwarts
 
 # 4. Соберите и запустите приложение
 mvn clean spring-boot:run
+### Проверка подключения
 
+После настройки убедитесь, что подключение работает:
+
+```bash
+# Проверьте, что PostgreSQL запущен
+psql -U postgres -c "SELECT version();"
+
+# Или через pgAdmin подключитесь к базе hogvards
 
